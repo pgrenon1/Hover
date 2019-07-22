@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6948635122466321222
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6948635122466321220}
+  - component: {fileID: 6948635122466321221}
+  m_Layer: 0
+  m_Name: Map
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6948635122466321220
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6948635122466321222}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6948635122466321221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6948635122466321222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 359c19b2ecc58e24f8a59c6b77d65d82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoUpdate: 1
+  seed: 1
+  mapWidth: 500
+  mapHeight: 20
+  octaves: 7
+  scale: 10
+  persistance: 1
+  lacunarity: 1
+  offset: {x: 0, y: 0}
+  islandPrefabs:
+  - {fileID: 6724755126121098600, guid: f28ba636f68111248aac124df1b02870, type: 3}
+  - {fileID: 1464486884700108347, guid: d8e526ac4773b314eaa3f5423f95965e, type: 3}
+  - {fileID: 4167517295129755482, guid: 8581f1085956e7c4a99b03f1d1ece4c5, type: 3}
+  difficultyCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 11.037737
+      value: 20.63507
+      inSlope: -0.43203098
+      outSlope: -0.43203098
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.16050743
+    - serializedVersion: 3
+      time: 20.00206
+      value: 1.9496945
+      inSlope: -0.29922146
+      outSlope: -0.29922146
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.14857955
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  islands: []
+  passengerPrefab: {fileID: 8930585654606546200, guid: d566fcc0de0fb4d4b8c386bf1f65b1d4,
+    type: 3}
+  threshold: 8.2
+  sparsity: 1000
