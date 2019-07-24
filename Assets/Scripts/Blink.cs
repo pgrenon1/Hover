@@ -14,11 +14,13 @@ public class Blink : MonoBehaviour
     private Image _image;
     private TextMeshProUGUI _text;
     private float _timer;
+    private TextMeshProUGUI _childText;
 
     private void Start()
     {
         _text = GetComponent<TextMeshProUGUI>();
         _image = GetComponent<Image>();
+        _childText = GetComponentInChildren<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
@@ -31,6 +33,9 @@ public class Blink : MonoBehaviour
 
             if (_text)
                 _text.enabled = isNormallyOn;
+
+            if (_childText)
+                _childText.enabled = isNormallyOn;
         }
         else
         {
@@ -42,6 +47,9 @@ public class Blink : MonoBehaviour
 
                 if (_text)
                     _text.enabled = !_text.enabled;
+
+                if (_childText)
+                    _childText.enabled = !_childText.enabled;
 
                 _timer = blinkTime;
             }

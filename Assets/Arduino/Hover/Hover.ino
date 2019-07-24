@@ -5,10 +5,10 @@
 //SERIAL COMMUNICATION
 SerialCommand serialCom;
 
-Switch pushButtonLeft = Switch(2);
+Switch pushButtonLeft = Switch(5);
 Switch keySwitchLeft = Switch(3);
 Switch keySwitchRight =  Switch(4);
-Switch pushButtonRight = Switch(5);
+Switch pushButtonRight = Switch(2);
 
 long potReadInterval = 100;
 long previousMillis = 0;

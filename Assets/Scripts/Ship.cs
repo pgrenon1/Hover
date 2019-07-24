@@ -5,6 +5,7 @@ using DG.Tweening;
 using System.Linq;
 using TMPro;
 using System;
+using UnityEngine.UI;
 
 public class Ship : MonoBehaviour
 {
@@ -18,16 +19,21 @@ public class Ship : MonoBehaviour
     public bool detectUpsideDown = false;
     public float thrustModifier = 1.2f;
     public float fuelWarningBlinkTime = 0.7f;
+    public float boostRecoverySpeed = 0.025f;
+    public float boostDepletionSpeed = 0.2f;
+
     [Space]
     public float maxAngle = 30f;
     public float pushbackScalingRatio = 1f;
     public float pushbackTorque = 10f;
+
     [Header("Thrusters")]
     public Thruster frontRightThruster;
     public Thruster frontLeftThruster;
     public Thruster backRightThruster;
     public Thruster backLeftThruster;
     public AnimationCurve flameIntensityCurve;
+
     [Header("HUD")]
     public TextMeshProUGUI fuelText;
     public TextMeshProUGUI fuelWarning;
@@ -36,13 +42,39 @@ public class Ship : MonoBehaviour
     public TextMeshProUGUI xSpeedText;
     public TextMeshProUGUI ySpeedText;
     public TextMeshProUGUI distanceToClosestText;
+    public GameObject boostIndicatorLeft;
+    public GameObject boostIndicatorRight;
+    public Image boostIndicatorLeftFill;
+    public Image boostIndicatorRightFill;
+    public TextMeshProUGUI restartEngineLeft;
+    public TextMeshProUGUI restartEngineRight;
+
     [Header("Passengers")]
     public int passengers;
+
     [Header("Boost")]
     public float boostModifierValue = 3f;
 
-    public bool KeyLeft { get; set; }
-    public bool KeyRight { get; set; }
+    private bool _keyLeft;
+    public bool KeyLeft
+    {
+        get { return _keyLeft; }
+        set
+        {
+            _keyLeft = value;
+            _leftEngine = _keyLeft;
+        }
+    }
+    private bool _keyRight;
+    public bool KeyRight
+    {
+        get { return _keyRight; }
+        set
+        {
+            _keyRight = value;
+            _rightEngine = _keyRight;
+        }
+    }
     public bool PushLeft { get; set; }
     public bool PushRight { get; set; }
     public bool IsReseting { get; private set; } = false;
@@ -53,6 +85,10 @@ public class Ship : MonoBehaviour
     public float LeftModifier { get; set; }
     public float RightModifier { get; set; }
 
+    private bool _leftEngine;
+    private bool _rightEngine;
+    private float leftBoost = 1;
+    private float rightBoost = 1;
     private Rigidbody _rigidbody;
     private Blink _fuelBlink;
     private float _upsideDownCounter;
@@ -82,8 +118,6 @@ public class Ship : MonoBehaviour
         Thrusters.Add(backLeftThruster);
 
         StartCoroutine(FuelPerSec());
-
-        ArduinoSerialComm.Instance.SendSerialMessage("state");
     }
 
     private IEnumerator FuelPerSec()
@@ -102,9 +136,6 @@ public class Ship : MonoBehaviour
 
     void Update()
     {
-        //if (!GameManager.Instance.IsReady)
-        //    return;
-
         UpdateCheatz();
 
         UpdateOnTarget();
@@ -116,26 +147,87 @@ public class Ship : MonoBehaviour
         UpdateStats();
 
         UpdateUI();
+
+        UpdateBoost();
+
+        UpdateRestartGame();
+    }
+
+    private void UpdateRestartGame()
+    {
+        if (transform.position.y < -800f)
+        {
+            GameManager.Instance.RestartGame();
+        }
+    }
+
+    private void UpdateBoost()
+    {
+        if (leftBoost < 1)
+        {
+            leftBoost += Time.deltaTime * boostRecoverySpeed;
+            boostIndicatorLeft.gameObject.SetActive(true);
+            boostIndicatorLeftFill.fillAmount = leftBoost;
+        }
+        else
+        {
+            leftBoost = 1;
+            boostIndicatorLeft.gameObject.SetActive(false);
+        }
+
+        if (rightBoost < 1)
+        {
+            rightBoost += Time.deltaTime * boostRecoverySpeed;
+            boostIndicatorRight.gameObject.SetActive(true);
+            boostIndicatorRightFill.fillAmount = rightBoost;
+        }
+        else
+        {
+            rightBoost = 1;
+            boostIndicatorRight.gameObject.SetActive(false);
+        }
     }
 
     private void UpdateThrusters()
     {
-        if (KeyRight && KeyLeft && PushRight && PushLeft)
+        if (_leftEngine)
         {
-            RightModifier = thrustModifier * boostModifierValue;
-            LeftModifier = thrustModifier * boostModifierValue;
+            if (PushLeft)
+            {
+                LeftModifier = thrustModifier * boostModifierValue;
+                leftBoost -= boostDepletionSpeed * Time.deltaTime;
+                if (leftBoost < 0)
+                {
+                    leftBoost = 0;
+                    _leftEngine = false;
+                }
+            }
+            else
+                LeftModifier = thrustModifier;
         }
         else
         {
-            if (KeyRight)
-                RightModifier = 0;
+            LeftModifier = 0;
+        }
+
+        if (_rightEngine)
+        {
+            if (PushRight)
+            {
+                RightModifier = thrustModifier * boostModifierValue;
+                rightBoost -= boostDepletionSpeed * Time.deltaTime;
+                if (rightBoost < 0)
+                {
+                    rightBoost = 0;
+                    _rightEngine = false;
+                }
+            }
             else
                 RightModifier = thrustModifier;
-
-            if (KeyLeft)
-                LeftModifier = 0;
-            else
-                LeftModifier = thrustModifier;
+        }
+        else
+        {
+            RightModifier = 0;
         }
 
         frontRightThruster.UpdateThrust(RightModifier);
@@ -195,6 +287,9 @@ public class Ship : MonoBehaviour
         {
             _fuelBlink.IsBlinking = Fuel < 1000;
         }
+
+        restartEngineLeft.enabled = !_leftEngine;
+        restartEngineRight.enabled = !_rightEngine;
     }
 
     private void UpdateCheatz()

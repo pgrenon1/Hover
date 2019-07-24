@@ -27,29 +27,34 @@ public class Thruster : MonoBehaviour
     {
         if (!GameManager.Instance.IsReady)
             return;
-
-        UpdateFlame();
     }
 
-    private void UpdateFlame()
+    private void UpdateFlame(float modifier)
     {
-        _flameMaterial.SetColor("_OuterColor", Color.HSVToRGB(CurrentThrust.Remap(0f, 1f, 0.1f, 1f), .8f, 1));
-        _flameMaterial.SetColor("_OuterColorTop", Color.HSVToRGB(CurrentThrust.Remap(0f, 1f, 0.1f, 1f), .8f, 1));
-        _flameMaterial.SetFloat("_FlameIntensity", _ship.flameIntensityCurve.Evaluate(CurrentThrust));
-        _flameMaterial.SetFloat("_NoiseSpeed2", CurrentThrust.Remap(0f, 1f, -1f, -2f));
+        if (modifier > 0)
+        {
+            _flameMaterial.SetColor("_OuterColor", Color.HSVToRGB(CurrentThrust.Remap(0f, 1f, 0.1f, 1f), .8f, 1));
+            _flameMaterial.SetColor("_OuterColorTop", Color.HSVToRGB(CurrentThrust.Remap(0f, 1f, 0.1f, 1f), .8f, 1));
+            _flameMaterial.SetFloat("_FlameIntensity", _ship.flameIntensityCurve.Evaluate(CurrentThrust));
+            _flameMaterial.SetFloat("_NoiseSpeed2", CurrentThrust.Remap(0f, 1f, -1f, -2f));
+        }
+        else
+        {
+            _flameMaterial.SetFloat("_FlameIntensity", _ship.flameIntensityCurve.Evaluate(0));
+        }
     }
 
     public void UpdateThrust(float modifier)
     {
         thrustIndicator.UpdateIndicator(CurrentThrust, modifier);
+        UpdateFlame(modifier);
 
         if (GameManager.Instance.IsReady)
         {
             if (!_ship.IsReseting && _ship.Fuel > 0)
             {
-                //Debug.Log(name + " = " + CurrentThrust * modifier);
                 _rigidbody.AddForceAtPosition(transform.up * CurrentThrust * modifier, transform.position, _ship.forceMode);
-                _ship.Fuel -= CurrentThrust * _ship.fuelPerThrust;
+                _ship.Fuel -= CurrentThrust * _ship.fuelPerThrust * modifier;
             }
         }
 

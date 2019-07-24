@@ -148,10 +148,10 @@ public class ArduinoSerialComm : MonoBehaviour
         {
             GameManager.Instance.FirstMessageRecieved = true;
             var split = msg.Split(',');
-            ThrusterFrontRight.CurrentThrust = float.Parse(split[0]).Remap(0, 1023, 0, 1);
-            ThrusterBackRight.CurrentThrust = float.Parse(split[1]).Remap(0, 1023, 0, 1);
-            ThrusterFrontLeft.CurrentThrust = float.Parse(split[2]).Remap(0, 1023, 0, 1);
-            ThrusterBackLeft.CurrentThrust = float.Parse(split[3]).Remap(0, 1023, 0, 1);
+            ThrusterFrontLeft.CurrentThrust = float.Parse(split[0]).Remap(0, 1023, 0, 1);
+            ThrusterBackLeft.CurrentThrust = float.Parse(split[1]).Remap(0, 1023, 0, 1);
+            ThrusterBackRight.CurrentThrust = float.Parse(split[2]).Remap(0, 1023, 0, 1);
+            ThrusterFrontRight.CurrentThrust = float.Parse(split[3]).Remap(0, 1023, 0, 1);
         }
 
         //var valA = msg.Substring(indexofA + 1, msg.IndexOf("B") - indexofA + 1);
@@ -185,6 +185,11 @@ public class ArduinoSerialComm : MonoBehaviour
         //}
 
         //Debug.Log("Unhandled message arrived: " + msg);
+    }
+
+    public void GetSwitchStatus()
+    {
+        SendSerialMessage("state");
     }
 
     public void SendSerialMessage(string msg)

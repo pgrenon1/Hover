@@ -44,8 +44,17 @@ public class GameManager : MonoBehaviour
     public Coroutine OnTargetCoroutine { get; set; }
     public bool IsCheating { get; set; }
     public bool IsThrustersToZero { get; set; }
-    public bool IsReady { get; set; }
-    //public bool IsInTransition;
+    private bool _isReady;
+    public bool IsReady
+    {
+        get { return _isReady; }
+        set
+        {
+            _isReady = value;
+            if (value)
+                ArduinoSerialComm.Instance.GetSwitchStatus();
+        }
+    }
     public bool FirstMessageRecieved { get; set; }
 
     private float _time;
@@ -125,7 +134,7 @@ public class GameManager : MonoBehaviour
                 ship.thrustModifier = 1;
         }
 
-        if (ship.Thrusters.All(thruster => thruster.CurrentThrust < 0.1f))
+        if (!IsReady && ship.Thrusters.All(thruster => thruster.CurrentThrust < 0.1f))
             IsReady = true;
 
         if (!IsReady)

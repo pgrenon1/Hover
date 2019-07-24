@@ -43,17 +43,17 @@ public class ThrustIndicator : MonoBehaviour
 
     public void UpdateIndicator(float currentThrust, float modifier)
     {
-        float roundedCurrentThrust = (float)Math.Round(currentThrust, 1);
-
-        _blink.IsBlinking = modifier <= 0;
-
-        _image.fillAmount = roundedCurrentThrust;
-        _image.color = Color.HSVToRGB(roundedCurrentThrust.Remap(0f, 1f, 0.1f, 1f), 1, 1);
-        _text.text = Mathf.RoundToInt(currentThrust * 100).ToString();
+        float roundedCurrentThrust = modifier == 0 ? 0 : (float)Math.Round(currentThrust, 1);
 
         if (thruster.CurrentThrust > shakeThreshold)
         {
-            _trauma = currentThrust;
+            _trauma = roundedCurrentThrust;
         }
+
+        _image.fillAmount = roundedCurrentThrust;
+        _image.color = Color.HSVToRGB(roundedCurrentThrust.Remap(0f, 1f, 0.1f, 1f), 1, 1);
+
+        _text.text = Mathf.RoundToInt(modifier == 0 ? 0 : currentThrust * 100).ToString();
+        _blink.IsBlinking = modifier <= 0;
     }
 }
