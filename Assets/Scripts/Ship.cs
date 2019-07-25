@@ -350,7 +350,7 @@ public class Ship : MonoBehaviour
         transform.eulerAngles = _startEulers;
     }
 
-    Transform GetClosestTarget()
+    private Transform GetClosestTarget()
     {
 
         Transform closestTarget = null;

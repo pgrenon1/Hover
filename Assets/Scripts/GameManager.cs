@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviour
     [Space]
     public TextMeshProUGUI fuelWarning;
 
+    public ScorePopup scorePopupPrefab;
+
     public Coroutine OnTargetCoroutine { get; set; }
     public bool IsCheating { get; set; }
     public bool IsThrustersToZero { get; set; }
@@ -169,8 +171,13 @@ public class GameManager : MonoBehaviour
         // If the ship is still on target at the end
         if (ship.OnTargetCounter >= 4)
         {
-            //_score += Mathf.RoundToInt(_points * targetInContact.Multiplier);
-            //StartOver();
+            yield return new WaitForSeconds(0.5f);
+
+            var popup = Instantiate(scorePopupPrefab, Vector3.zero, Quaternion.identity, FindObjectOfType<Canvas>().transform);
+            popup.StartCoroutine(popup.DoPop(_points, targetInContact.Multiplier));
+
+            _score += Mathf.RoundToInt(_points * targetInContact.Multiplier);
+            StartOver();
         }
 
         OnTargetCoroutine = null;
